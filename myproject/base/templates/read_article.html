@@ -1,0 +1,111 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container fade-up" data-aos="fade-up">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-0">
+                    <i class="fas fa-book-open text-primary me-2"></i>Article Library
+                </h2>
+                <p class="text-muted mt-2">Discover amazing articles from various categories</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'home' %}" class="btn-gradient btn me-2">
+                    <i class="fas fa-plus me-2"></i>Add Article
+                </a>
+                <a href="{% url 'create_category' %}" class="btn-outline-gradient btn me-2">
+                    <i class="fas fa-folder-plus me-2"></i>Add Category
+                </a>
+                <a href="{% url 'history_article' %}" class="btn-outline-gradient btn">
+                    <i class="fas fa-trash-alt me-2"></i>Deleted Articles
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control" 
+                               placeholder="Search by title, author, description..." 
+                               value="{{ search|default:'' }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" 
+                                    {% if selected_category|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn-gradient btn w-100">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Articles Grid -->
+    {% if data %}
+        <div class="row">
+            {% for article in data %}
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
+                    <div class="card h-100">
+                        {% if article.image %}
+                            <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}" 
+                                 style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light text-center py-5">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ article.title }}</h5>
+                            <p class="card-text text-muted">{{ article.desc|truncatechars:100 }}</p>
+                            <div class="mb-2">
+                                <span class="badge bg-primary">{{ article.type.name|default:"Uncategorized" }}</span>
+                                <span class="badge bg-success">${{ article.cost }}</span>
+                            </div>
+                            <p class="mb-1">
+                                <i class="fas fa-user me-2 text-primary"></i>{{ article.author }}
+                            </p>
+                            <div class="mt-3">
+                                <a href="{% url 'update_article' article.id %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                                <a href="{% url 'delete_article' article.id %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+            <h3>No Articles Found</h3>
+            <p class="text-muted">Start by adding your first article!</p>
+            <a href="{% url 'home' %}" class="btn-gradient btn mt-3">
+                <i class="fas fa-plus me-2"></i>Add Article
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

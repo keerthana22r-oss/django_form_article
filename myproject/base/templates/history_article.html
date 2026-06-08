@@ -1,0 +1,152 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container fade-up" data-aos="fade-up">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-0">
+                    <i class="fas fa-trash-alt text-danger me-2"></i>Deleted Articles History
+                </h2>
+                <p class="text-muted mt-2">Articles that have been moved to trash. Restore them within 30 days.</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'read_article' %}" class="btn-gradient btn">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Articles
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control" 
+                               placeholder="Search deleted articles by title, author, or description..." 
+                               value="{{ search|default:'' }}">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" 
+                                    {% if selected_category|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn-gradient btn w-100">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Deleted Articles List -->
+    {% if data %}
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 20%">Title</th>
+                            <th style="width: 30%">Description</th>
+                            <th style="width: 15%">Author</th>
+                            <th style="width: 10%">Cost</th>
+                            <th style="width: 10%">Media</th>
+                            <th style="width: 10%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <strong class="text-dark">{{ article.title }}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>{{ article.type.name|default:"No category" }}
+                                </small>
+                            </td>
+                            <td>
+                                {{ article.desc|truncatechars:80 }}
+                                {% if article.deleted_at %}
+                                    <br>
+                                    <small class="text-danger">
+                                        <i class="fas fa-clock me-1"></i>Deleted: {{ article.deleted_at|date:"M d, Y H:i" }}
+                                    </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="fas fa-user-circle text-primary me-1"></i>
+                                {{ article.author }}
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-dollar-sign me-1"></i>{{ article.cost }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if article.image %}
+                                    <a href="{{ article.image.url }}" target="_blank" class="btn btn-sm btn-outline-primary mb-1">
+                                        <i class="fas fa-image me-1"></i>Image
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No image</span>
+                                {% endif %}
+                                <br>
+                                {% if article.video %}
+                                    <a href="{{ article.video.url }}" target="_blank" class="btn btn-sm btn-outline-info mt-1">
+                                        <i class="fas fa-video me-1"></i>Video
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No video</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'restore_article' article.id %}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-trash-restore me-1"></i>Restore
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> Deleted articles will be automatically removed after 30 days. 
+                    Restore them now to keep them in your collection.
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-trash-alt fa-4x text-muted mb-3"></i>
+            <h3>No Deleted Articles Found</h3>
+            <p class="text-muted">Your trash is empty. Deleted articles will appear here.</p>
+            <a href="{% url 'read_article' %}" class="btn-gradient btn mt-3">
+                <i class="fas fa-book-open me-2"></i>Browse Articles
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

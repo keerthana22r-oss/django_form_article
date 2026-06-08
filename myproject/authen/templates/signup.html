@@ -1,0 +1,174 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="container fade-up" data-aos="fade-up">
+    <div class="row justify-content-center align-items-center min-vh-80">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Decorative Header -->
+                <div class="bg-gradient-primary p-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-plus fa-3x text-white"></i>
+                    </div>
+                    <h3 class="text-white mb-0 fw-bold">Join ArticleHub</h3>
+                    <p class="text-white-50 mt-2 mb-0">Create your free account today</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-user text-primary me-2"></i>Username
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-user text-muted"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control border-start-0" 
+                                       placeholder="Choose a username" required>
+                            </div>
+                            <small class="text-muted">150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-envelope text-primary me-2"></i>Email
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-envelope text-muted"></i>
+                                </span>
+                                <input type="email" name="email" class="form-control border-start-0" 
+                                       placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-lock text-primary me-2"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-key text-muted"></i>
+                                </span>
+                                <input type="password" name="password1" class="form-control border-start-0" 
+                                       placeholder="Create a password" required id="password1">
+                                <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">Your password must contain at least 8 characters.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-check-circle text-primary me-2"></i>Confirm Password
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-check text-muted"></i>
+                                </span>
+                                <input type="password" name="password2" class="form-control border-start-0" 
+                                       placeholder="Confirm your password" required id="password2">
+                                <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword2">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                                <label class="form-check-label text-muted small" for="termsCheck">
+                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and 
+                                    <a href="#" class="text-decoration-none">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-gradient btn w-100 py-2 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="text-muted mb-0">
+                                Already have an account? 
+                                <a href="{% url 'signin' %}" class="text-decoration-none fw-semibold">
+                                    Sign In <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.min-vh-80 {
+    min-height: 80vh;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.input-group-text {
+    background-color: white;
+    border-right: none;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: none;
+}
+
+.input-group:focus-within {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-radius: 8px;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.card {
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+// Password visibility toggles
+document.getElementById('togglePassword1')?.addEventListener('click', function() {
+    const passwordInput = document.getElementById('password1');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+
+document.getElementById('togglePassword2')?.addEventListener('click', function() {
+    const passwordInput = document.getElementById('password2');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+</script>
+
+{% endblock %}

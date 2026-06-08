@@ -1,0 +1,18 @@
+
+<nav>
+
+    <div class="logo">
+            <h2>DJANGO FORMS BASED ARTICLE PROJECT</h2>
+
+        {% if request.user.is_authenticated %}  <!-- if user is done with login -->
+    
+            <a href="{% url 'read_article' %}"><button>Article List</button></a>
+            <a href="{% url 'read_category' %}"><button>Category List</button></a>
+            <a href="{% url 'profile' %}"><button>Profile</button></a>
+            <a href="{% url 'signout' %}"><button>Logout</button></a>
+        {% else %}  <!-- if user is not done with login -->
+            <a href="{% url 'signup' %}"><button>Register</button></a>
+            <a href="{% url 'signin' %}"><button>Login</button></a>
+        {% endif %}
+    </div>
+</nav>

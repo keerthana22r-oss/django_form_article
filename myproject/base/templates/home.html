@@ -1,0 +1,372 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container fade-up" data-aos="fade-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Header with Gradient -->
+                <div class="bg-gradient-primary p-4 text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-feather-alt fa-3x"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-0 fw-bold">Create New Article</h2>
+                            <p class="mb-0 opacity-75">Share your knowledge and insights with the world</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form method="POST" enctype="multipart/form-data" id="articleForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-lg-7">
+                                <!-- Title Field -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-heading text-primary me-2"></i>Article Title
+                                    </label>
+                                    {{ form.title }}
+                                    <small class="text-muted">Choose a catchy and descriptive title</small>
+                                </div>
+                                
+                                <!-- Category Field -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-folder-open text-primary me-2"></i>Category
+                                    </label>
+                                    {{ form.type }}
+                                    <div class="mt-1">
+                                        <a href="{% url 'create_category' %}" class="text-decoration-none small">
+                                            <i class="fas fa-plus-circle me-1"></i>Add new category
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Description Field -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-align-left text-primary me-2"></i>Description
+                                    </label>
+                                    {{ form.desc }}
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Write a detailed description of your article</small>
+                                        <small class="text-muted"><span id="charCount">0</span>/500 characters</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column -->
+                            <div class="col-lg-5">
+                                <!-- Author Field -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-user text-primary me-2"></i>Author
+                                    </label>
+                                    {{ form.author }}
+                                    <small class="text-muted">Your name or pen name</small>
+                                </div>
+                                
+                                <!-- Cost Field -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-dollar-sign text-primary me-2"></i>Cost (USD)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">$</span>
+                                        {{ form.cost }}
+                                    </div>
+                                    <small class="text-muted">Set a price for your premium content</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Media Section -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="border-top pt-4 mb-4">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-image text-primary me-2"></i>Media Attachments
+                                    </h5>
+                                </div>
+                            </div>
+                            
+                            <!-- Image Upload -->
+                            <div class="col-md-6 mb-4">
+                                <div class="upload-card border rounded-3 p-4 text-center">
+                                    <div class="upload-icon mb-3">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
+                                    </div>
+                                    <label class="form-label fw-bold">Cover Image</label>
+                                    {{ form.image }}
+                                    <div id="imagePreview" class="mt-3" style="display: none;">
+                                        <img id="previewImg" src="#" alt="Preview" style="max-width: 100%; max-height: 150px; border-radius: 10px;">
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>Upload a captivating image (JPG, PNG, GIF)
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Video Upload -->
+                            <div class="col-md-6 mb-4">
+                                <div class="upload-card border rounded-3 p-4 text-center">
+                                    <div class="upload-icon mb-3">
+                                        <i class="fas fa-video fa-3x text-primary"></i>
+                                    </div>
+                                    <label class="form-label fw-bold">Video (Optional)</label>
+                                    {{ form.video }}
+                                    <div id="videoPreview" class="mt-3" style="display: none;">
+                                        <video id="previewVideo" controls style="max-width: 100%; max-height: 150px; border-radius: 10px;">
+                                            <source src="#" id="videoSource">
+                                        </video>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle me-1"></i>Add a related video (MP4, WebM, OGG)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tips Section -->
+                        <div class="alert alert-info mt-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-lightbulb fa-2x"></i>
+                                </div>
+                                <div>
+                                    <strong>Pro Tips:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Use a high-quality image to attract more readers</li>
+                                        <li>Write a clear and engaging title (50-60 characters recommended)</li>
+                                        <li>Add relevant keywords in your description for better searchability</li>
+                                        <li>Preview your article before publishing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-end mt-4 pt-3">
+                            <a href="{% url 'read_article' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-outline-primary btn-lg px-4" id="previewBtn">
+                                <i class="fas fa-eye me-2"></i>Preview
+                            </button>
+                            <button type="submit" class="btn-gradient btn-lg px-5">
+                                <i class="fas fa-paper-plane me-2"></i>Publish Article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Article Preview
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent">
+                    <h2 id="previewTitle">Your Article Title</h2>
+                    <div class="text-muted mb-3">
+                        <span id="previewAuthor"><i class="fas fa-user"></i> Author</span>
+                        <span class="mx-2">•</span>
+                        <span id="previewCategory"><i class="fas fa-tag"></i> Category</span>
+                        <span class="mx-2">•</span>
+                        <span id="previewCost"><i class="fas fa-dollar-sign"></i> Cost</span>
+                    </div>
+                    <div id="previewDescription" class="mt-3"></div>
+                    <div id="previewMedia" class="mt-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.upload-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.upload-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: white;
+}
+
+.upload-icon {
+    transition: all 0.3s ease;
+}
+
+.upload-card:hover .upload-icon {
+    transform: scale(1.1);
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* Hide default file input styling */
+input[type="file"] {
+    padding: 8px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    background: white;
+}
+
+input[type="file"]:hover {
+    border-color: #667eea;
+    background: #f8f9fa;
+}
+</style>
+
+<script>
+// Character counter for description
+const descriptionField = document.querySelector('#id_desc');
+const charCountSpan = document.querySelector('#charCount');
+
+function updateCharCount() {
+    const count = descriptionField.value.length;
+    charCountSpan.textContent = count;
+    
+    if (count > 450 && count <= 500) {
+        charCountSpan.style.color = '#ff9800';
+    } else if (count > 500) {
+        charCountSpan.style.color = '#dc3545';
+        charCountSpan.textContent = 'Maximum 500 characters reached!';
+        descriptionField.value = descriptionField.value.substring(0, 500);
+    } else {
+        charCountSpan.style.color = '#6c757d';
+    }
+}
+
+if (descriptionField) {
+    descriptionField.addEventListener('input', updateCharCount);
+    updateCharCount();
+}
+
+// Image preview
+const imageInput = document.querySelector('#id_image');
+const imagePreview = document.querySelector('#imagePreview');
+const previewImg = document.querySelector('#previewImg');
+
+imageInput?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            previewImg.src = event.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.style.display = 'none';
+    }
+});
+
+// Video preview
+const videoInput = document.querySelector('#id_video');
+const videoPreview = document.querySelector('#videoPreview');
+const previewVideo = document.querySelector('#previewVideo');
+const videoSource = document.querySelector('#videoSource');
+
+videoInput?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const url = URL.createObjectURL(file);
+        videoSource.src = url;
+        previewVideo.load();
+        videoPreview.style.display = 'block';
+    } else {
+        videoPreview.style.display = 'none';
+    }
+});
+
+// Preview functionality
+const previewBtn = document.querySelector('#previewBtn');
+if (previewBtn) {
+    previewBtn.addEventListener('click', function() {
+        const title = document.querySelector('#id_title').value || 'Your Article Title';
+        const author = document.querySelector('#id_author').value || 'Anonymous';
+        const categorySelect = document.querySelector('#id_type');
+        const category = categorySelect.options[categorySelect.selectedIndex]?.text || 'Uncategorized';
+        const cost = document.querySelector('#id_cost').value || '0';
+        const description = document.querySelector('#id_desc').value || 'No description provided.';
+        
+        document.querySelector('#previewTitle').textContent = title;
+        document.querySelector('#previewAuthor').innerHTML = `<i class="fas fa-user"></i> ${author}`;
+        document.querySelector('#previewCategory').innerHTML = `<i class="fas fa-tag"></i> ${category}`;
+        document.querySelector('#previewCost').innerHTML = `<i class="fas fa-dollar-sign"></i> ${cost}`;
+        document.querySelector('#previewDescription').innerHTML = description.replace(/\n/g, '<br>');
+        
+        // Preview media
+        const previewMedia = document.querySelector('#previewMedia');
+        previewMedia.innerHTML = '';
+        
+        if (imageInput?.files[0]) {
+            const imgUrl = URL.createObjectURL(imageInput.files[0]);
+            previewMedia.innerHTML += `<div class="mt-3"><img src="${imgUrl}" class="img-fluid rounded" style="max-height: 300px;"></div>`;
+        }
+        
+        if (videoInput?.files[0]) {
+            const videoUrl = URL.createObjectURL(videoInput.files[0]);
+            previewMedia.innerHTML += `<div class="mt-3"><video controls class="w-100 rounded"><source src="${videoUrl}"></video></div>`;
+        }
+        
+        new bootstrap.Modal(document.getElementById('previewModal')).show();
+    });
+}
+</script>
+
+{% endblock %}

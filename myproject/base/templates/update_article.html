@@ -1,0 +1,283 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container fade-up" data-aos="fade-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Header -->
+                <div class="bg-gradient-primary p-4 text-white">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-edit fa-2x me-3"></i>
+                                <h2 class="mb-0 fw-bold">Update Article</h2>
+                            </div>
+                            <p class="mb-0 opacity-75">Edit your article details</p>
+                        </div>
+                        <a href="{% url 'read_article' %}" class="btn btn-light btn-sm rounded-pill">
+                            <i class="fas fa-eye me-1"></i> View All Articles
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Title Field -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-heading text-primary me-2"></i>Title
+                            </label>
+                            {{ form.title }}
+                            <small class="text-muted">Make it catchy and descriptive</small>
+                        </div>
+                        
+                        <!-- Category Field -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-folder-open text-primary me-2"></i>Category
+                            </label>
+                            {{ form.type }}
+                        </div>
+                        
+                        <!-- Description Field -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-align-left text-primary me-2"></i>Description
+                            </label>
+                            {{ form.desc }}
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Write a detailed description</small>
+                                <small class="text-muted"><span id="charCount">0</span>/500 characters</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Author Field -->
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-user text-primary me-2"></i>Author
+                                </label>
+                                {{ form.author }}
+                            </div>
+                            
+                            <!-- Cost Field -->
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-dollar-sign text-primary me-2"></i>Cost (USD)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">$</span>
+                                    {{ form.cost }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Media Section -->
+                        {% if form.instance.image or form.instance.video %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-photo-video text-primary me-2"></i>Current Media
+                            </label>
+                            <div class="row">
+                                {% if form.instance.image %}
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-image fa-2x text-primary mb-2"></i>
+                                            <p class="mb-2">Current Image</p>
+                                            <img src="{{ form.instance.image.url }}" alt="Current image" 
+                                                 style="max-width: 100%; max-height: 150px; border-radius: 10px;">
+                                            <p class="text-muted small mt-2">Current image will be replaced if you upload a new one</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if form.instance.video %}
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-video fa-2x text-primary mb-2"></i>
+                                            <p class="mb-2">Current Video</p>
+                                            <video controls style="max-width: 100%; max-height: 150px; border-radius: 10px;">
+                                                <source src="{{ form.instance.video.url }}">
+                                            </video>
+                                            <p class="text-muted small mt-2">Current video will be replaced if you upload a new one</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- New Media Upload -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-upload text-primary me-2"></i>Update Media (Optional)
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="upload-card border rounded-3 p-3 text-center">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-primary mb-2"></i>
+                                        <label class="form-label d-block">New Image</label>
+                                        {{ form.image }}
+                                        <div id="imagePreview" class="mt-2" style="display: none;">
+                                            <img id="previewImg" src="#" alt="Preview" style="max-width: 100%; max-height: 100px;">
+                                        </div>
+                                        <small class="text-muted">Leave empty to keep current image</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="upload-card border rounded-3 p-3 text-center">
+                                        <i class="fas fa-video fa-2x text-primary mb-2"></i>
+                                        <label class="form-label d-block">New Video</label>
+                                        {{ form.video }}
+                                        <div id="videoPreview" class="mt-2" style="display: none;">
+                                            <video id="previewVideo" controls style="max-width: 100%; max-height: 100px;">
+                                                <source id="videoSource">
+                                            </video>
+                                        </div>
+                                        <small class="text-muted">Leave empty to keep current video</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-end mt-4 pt-3">
+                            <a href="{% url 'read_article' %}" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn-gradient px-5">
+                                <i class="fas fa-save me-2"></i>Update Article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Info Card -->
+            <div class="alert alert-info mt-4">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-info-circle fa-2x"></i>
+                    </div>
+                    <div>
+                        <strong>Note:</strong>
+                        <ul class="mb-0 mt-1">
+                            <li>Fields marked with * are required</li>
+                            <li>Upload new media only if you want to change existing ones</li>
+                            <li>Your changes will be visible immediately after updating</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.upload-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.upload-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background: white;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+</style>
+
+<script>
+// Character counter for description
+const descField = document.querySelector('#id_desc');
+const charCountSpan = document.querySelector('#charCount');
+
+function updateCharCount() {
+    const count = descField.value.length;
+    charCountSpan.textContent = count;
+    
+    if (count > 450) {
+        charCountSpan.style.color = '#ff9800';
+    }
+    if (count > 500) {
+        charCountSpan.style.color = '#dc3545';
+        descField.value = descField.value.substring(0, 500);
+        charCountSpan.textContent = '500';
+    }
+}
+
+if (descField) {
+    descField.addEventListener('input', updateCharCount);
+    updateCharCount();
+}
+
+// Image preview
+const imageInput = document.querySelector('#id_image');
+const imagePreview = document.querySelector('#imagePreview');
+const previewImg = document.querySelector('#previewImg');
+
+if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                previewImg.src = event.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
+}
+
+// Video preview
+const videoInput = document.querySelector('#id_video');
+const videoPreview = document.querySelector('#videoPreview');
+const previewVideo = document.querySelector('#previewVideo');
+const videoSource = document.querySelector('#videoSource');
+
+if (videoInput) {
+    videoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            videoSource.src = url;
+            previewVideo.load();
+            videoPreview.style.display = 'block';
+        } else {
+            videoPreview.style.display = 'none';
+        }
+    });
+}
+</script>
+
+{% endblock %}
